@@ -1,22 +1,19 @@
-var http = require('http'),
-      pandaCounter = 0;
+var server = require('./server.js'),
+    controller = require('./controller.js'),
+    app = server();
 
-http.createServer(function (req, res) {
-  var payload = "";
+app.get('/', function(req, res) {
+    res.send("OK");
+});
+app.get('/all_chirps', controller.getAllChirps);
+app.get('/all_users', controller.getAllUsers);
+app.get('/my_chirps', controller.getMyChirps);
+app.get('/chirps', controller.getChirps);
 
-  console.log(req.url);
-  console.log(req.method);
+app.post('/chirp', controller.postChirp);
+app.post('/register', controller.postRegister);
 
-  req.on('data', function(chunk) {
-    console.log("Received body data:");
-    console.log(chunk.toString());
-    payload += chunk.toString();
-  });
+app['delete']('/chirp', controller.deleteChirt);
 
-  req.on('end', function() {
-    pandaCounter ++;
-    res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-    res.end("PANDATIGAN " + pandaCounter);
-  });
-
-}).listen(8080);
+app.listen(3030);
+console.log("Server listen at port: " + 3030);

@@ -2,7 +2,7 @@
 (function() {
   'use strict';
 
-  var lastMaxItem = 8486991;
+  var lastMaxItem = 8488700;
   var request = require('request');
   var printf = require('printf');
 

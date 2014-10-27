@@ -1,0 +1,16 @@
+{
+  "name": "2-Chirper",
+  "version": "1.0.0",
+  "description": "Using the `http` module write a Chirpr(über innovative naming right there!) - a twitter-like service.",
+  "main": "controller.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "minimist": "^1.1.0",
+    "underscore": "^1.7.0"
+  }
+}
