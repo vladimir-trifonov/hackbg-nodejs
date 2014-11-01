@@ -70,7 +70,7 @@ function runTask(taskId, storage) {
 		})
 		.then(function(data) {
 			var deferred = Q.defer();
-			Q.when(mailCtrl.sendMails(data.matchedData), itemsCtrl.setProceededItems(storage, data.proceededItems)).then(function() {
+			Q.when(mailCtrl.sendMails(data.resultItems), itemsCtrl.setProceededItems(storage, data.proceededItems)).then(function() {
 				deferred.resolve();
 			}, function(err) {
 				deferred.reject(err);

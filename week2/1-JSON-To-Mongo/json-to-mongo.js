@@ -13,10 +13,13 @@ config.getValue('mongoConnectionUrl').done(function(mongoUrl) {
 					if (err) {
 						return err;
 					}
-					//collection.remove({}, function() {});					
+					//collection.remove({}, function() {});
 					if (docs.length === 0) {
 						collection.insert(data, function(err, result) {
-							console.log(err);
+							if(err) {
+								console.log(err);
+							}
+
 							console.log(result);
 
 							db.close();
@@ -25,7 +28,5 @@ config.getValue('mongoConnectionUrl').done(function(mongoUrl) {
 				})
 			})
 		});
-
-
 	});
 })

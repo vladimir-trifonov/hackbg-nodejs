@@ -7,12 +7,16 @@ module.exports = {
 	},
 	getProceededItems: function(storage) {
 		var deferred = Q.defer();
-		var vals = storage.getItem('proceededItems');
+		var vals = storage.getItem('proceededItems') || [];
 		deferred.resolve(vals);
 		return deferred.promise;
 	},
 	isItemProceeded: function(proceededItems, item) {
 		var itemId = null;
+
+		if(!proceededItems) {
+			return false;
+		}
 
 		if (item.children) {
 			id = item.children[0].id;
@@ -20,7 +24,7 @@ module.exports = {
 			id = item.id;
 		}
 
-		if (proceededItems[id] === true) {
+		if (proceededItems.indexOf(id) !== -1) {
 			return true;
 		}
 

@@ -20,7 +20,7 @@ module.exports = {
 						Item.isTypeMathes(item, User.getType(user))) {
 						if(Item.isTitleContainKeyword(item, User.getKeywords(user))) {
 							var email = User.getEmail(user);
-							if(!matchedData[email]) {
+							if(typeof matchedData[email] === "undefined") {
 								matchedData[email] = [];
 							}
 
