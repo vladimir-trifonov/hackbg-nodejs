@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Drawing Triangles On Canvas</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<form>
+		<fieldset>
+			<label for="color-picker">Select color: </label>
+	  		<input type="color" name="color" id="color-picker">
+		</fieldset>
+	 	<fieldset>
+			<label for="btn-clear">Clear canvas: </label>
+	  		<button id="btn-clear">Clear</button>
+		</fieldset>
+		<fieldset>
+			<label for="btn-save">Save canvas: </label>
+	  		<button id="btn-save">Save</button>
+		</fieldset>
+		<fieldset>
+			<label for="btn-load">Load canvas: </label>
+			<select id="canvas-name-select"></select>
+	  		<button id="btn-load">Load</button>
+		</fieldset>
+	</form>
+	<canvas id="myCanvas" width="1200" height="800"></canvas>
+	<script type="text/javascript" src="main.js"></script>
+</body>
+</html>
