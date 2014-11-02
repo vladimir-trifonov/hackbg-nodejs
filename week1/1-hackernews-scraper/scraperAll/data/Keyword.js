@@ -48,9 +48,13 @@ module.exports = {
 			if(err) {
 				console.log(err);
 			}
-			
+
 			deferred.resolve();
 		});
 		return deferred.promise;
+	},
+	saveKeywordsCountsToDb: function(MongoClientWrapper, config.collectionKeywordsName, vals) {
+		var mongoClient = new MongoClientWrapper();
+		throw "Not Implemented!";
 	}
 }

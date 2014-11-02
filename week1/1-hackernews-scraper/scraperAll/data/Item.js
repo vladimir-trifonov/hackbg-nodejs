@@ -8,8 +8,8 @@ var filesHelper = require("../common/filesHelper"),
 			'Content-Type': 'application/json'
 		}
 	},
-	itemUrlPath= '/v0/item/',
-	maxIitemUrlPath= '/v0/maxitem.json',
+	itemUrlPath = '/v0/item/',
+	maxIitemUrlPath = '/v0/maxitem.json',
 	maxItemFilePath = "maxItem.js",
 	itemExt = '.json';
 
@@ -17,7 +17,9 @@ module.exports = {
 	getMaxItemFromStorage: getMaxItemFromStorage,
 	saveMaxItemToStorage: saveMaxItemToStorage,
 	getMaxItemId: getMaxItemId,
-	getItem: getItem
+	getItem: getItem,
+	getMaxItemFromDb: getMaxItemFromDb,
+	saveMaxItemToDb: saveMaxItemToDb
 };
 
 function getMaxItemFromStorage(callback) {
@@ -67,3 +69,48 @@ function getItem(id, callback) {
 		callback(null, data);
 	});
 };
+
+function getMaxItemFromDb(MongoClientWrapper, collectionName, callback) {
+	var mongoClient = new MongoClientWrapper();
+
+	mongoClient.connection()
+		.then(function(cl) {
+				cl.getCollection(collectionName).findOne({ maxItem: { $exists: true } }, function(err, result) {
+						if (err) {
+							return callback(err);
+						}
+
+						if (result) {
+							callback(null, item);
+						} else {
+							callback(null, 0);
+						}
+						cl.closeDb();
+					})
+			}, function(err) {
+				callback(err);
+			}
+		);
+	};
+
+
+	function saveMaxItemToDb(MongoClientWrapper, collectionName, maxItem, callback) {
+		var mongoClient = new MongoClientWrapper();
+
+		mongoClient.connection()
+			.then(function(cl) {
+					cl.getCollection(collectionName).update({
+						"maxItem": maxItem
+					}, function(err, count) {
+						if (err) {
+							return callback(err);
+						}
+
+						callback();
+					});
+
+				},
+				function(err) {
+					callback(err);
+				});
+	};

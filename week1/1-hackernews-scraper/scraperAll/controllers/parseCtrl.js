@@ -1,11 +1,13 @@
 var Q = require('q'),
 	async = require('async'),
 	storage = require('node-persist'),
+	config = require('../configs/config'),
 	Item = require("../data/Item"),
 	Keyword = require("../data/Keyword"),
 	tasks = [],
 	isBusy = false,
-	onCompleted = [];
+	onCompleted = [],
+	MongoClientWrapper = require("../configs/mongodb").MongoClientWrapper;
 
 storage.initSync({
 	dir:'../../../data/storage',
@@ -71,7 +73,9 @@ function asyncWhile(tasks, oper, done) {
 
 function extractKeywordsAsync(data, callback) {
 	Keyword.countKeywords(data, storage)
-		.then(Keyword.saveKeywordsCountsToFile)
+		.then(function(vals) {
+			Keyword.saveKeywordsCountsToDb(MongoClientWrapper, config.collectionKeywordsName, vals)
+		})
 		.then(function() {
 			callback();
 		});

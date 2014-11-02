@@ -46,7 +46,16 @@ require(['jquery','async!http://maps.google.com/maps/api/js?sensor=false', 'jque
         }
 
         // *** Insert the get locations $.ajax logic here and call showPoints ***
-        alert(JSON.stringify(data, null, 4));
+         $.ajax({            
+            contentType: "application/json",
+            type: "GET",
+            url: "http://localhost:8010/api/location",
+            data: data
+        }).done(function(response) {
+            showPoints(response);
+        }).fail(function(error) {
+            console.log(error);
+        });        
     }
 
     var largeMap, markers = [];

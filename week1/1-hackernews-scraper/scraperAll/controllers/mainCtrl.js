@@ -1,10 +1,10 @@
 var Item = require("../data/Item"),
 	config = require('../configs/config'),
-	storage = require('node-persist').initSync(),
 	factory = require('../common/factory'),
 	Q = require('q'),
 	async = require('async'),
-	parser = require('./parseCtrl');
+	parser = require('./parseCtrl'),
+	MongoClientWrapper = require("../configs/mongodb").MongoClientWrapper;
 
 module.exports = {
 	scraperAll: function(next) {
@@ -22,10 +22,24 @@ module.exports = {
 };
 
 function startTask(options) {
-	getMaxItemFromStorage({
+	getMaxItemFromDb({
 		'deferred': options.deferred
 	});
 };
+
+function getMaxItemFromDb(options) {
+	var deferred = options.deferred;
+	Item.getMaxItemFromDb(MongoClientWrapper, config.collectionMaxItemName, function(err, maxItemFromDb) {
+		if (err) {
+			return deferred.reject(err);
+		}
+
+		getMaxItem({
+			'maxItemFromStorage': maxItemFromDb,
+			'deferred': options.deferred
+		});
+	})
+}
 
 function getMaxItemFromStorage(options) {
 	var deferred = options.deferred;
@@ -71,15 +85,17 @@ function createRanges(options) {
 function poll(options) {
 	var deferred = options.deferred,
 		ranges = options.ranges;
-	var mm = null;
+
 	async.whilst(function() {
 		return ranges.hasRange();
 	}, function(whilstCallback) {
 		var range = ranges.getRange(),
 			items = [];
+
 		async.until(function() {
 			return range[1] <= range[0];
 		}, function(untilCallback) {
+
 			Item.getItem(range[0], function(err, item) {
 				if (err) {
 					return untilCallback(err);
@@ -91,6 +107,7 @@ function poll(options) {
 					untilCallback();
 				});
 			});
+
 		}, function(err) {
 			if (err) {
 				return whilstCallback(err);
@@ -100,7 +117,7 @@ function poll(options) {
 				if (err) {
 					return whilstCallback(err);
 				}
-				Item.saveMaxItemToStorage(range[0], function(err) {
+				Item.saveMaxItemToDb(MongoClientWrapper, config.collectionMaxItemName, range[0], function(err) {
 					if(err) {
 						return whilstCallback(err);
 					}
@@ -108,14 +125,17 @@ function poll(options) {
 					whilstCallback();
 				})
 			});
+
 		});
 	}, function(err) {
+
 		parser.onParserCompleted(function() {
 			if (err) {
 				return deferred.reject(err);
 			}
 
 			deferred.resolve();
-		})
-	})
+		});
+
+	});
 };

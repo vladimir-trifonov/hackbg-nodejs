@@ -1,6 +1,6 @@
 var bodyParser = require('body-parser');
 
-module.exports = function(app, db) {
+module.exports = function(app, MongoClientWrapper) {
 	app.use(bodyParser.json());
 	app.all("*", function(req, res, next) {
 		res.header("Access-Control-Allow-Origin", "*");
@@ -9,7 +9,7 @@ module.exports = function(app, db) {
 		next();
 	});
 	app.use(function(req, res, next) {
-		req.db = db;
+		req.MongoClientWrapper = MongoClientWrapper;
 		next();
 	});
 	app.use(function(err, req, res, next) {

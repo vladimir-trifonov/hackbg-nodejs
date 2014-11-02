@@ -30,7 +30,16 @@ require(['jquery','async!http://maps.google.com/maps/api/js?sensor=false', 'jque
         }
 
         // *** Insert the save logic here ***
-        alert(JSON.stringify(data, null, 4));
+        $.ajax({            
+            contentType: "application/json",
+            type: "POST",
+            url: "http://localhost:8010/api/location",
+            data: JSON.stringify(data)
+        }).done(function(response) {
+            console.log(response);
+        }).fail(function(error) {
+            console.log(error);
+        });
     }
 
     function initialize() {
