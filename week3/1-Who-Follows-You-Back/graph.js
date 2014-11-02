@@ -92,17 +92,6 @@ DirectedGraph.prototype.toString = function() {
 
 };
 
-function traverse(state) {
-    var queue = [],
-        next = state;
-    while (next) {
-        if (next.possibleMoves) {
-            $.each(next.possibleMoves, function(i, possibleMove) {
-                queue.push(possibleMove);
-            });
-        }
-        next = queue.shift();
-    }
-}
+
 
 module.exports = DirectedGraph;
