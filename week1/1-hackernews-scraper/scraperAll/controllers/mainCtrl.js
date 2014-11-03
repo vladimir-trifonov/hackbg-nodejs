@@ -29,13 +29,13 @@ function startTask(options) {
 
 function getMaxItemFromDb(options) {
 	var deferred = options.deferred;
-	Item.getMaxItemFromDb(MongoClientWrapper, config.collectionMaxItemName, function(err, maxItemFromDb) {
+	Item.getMaxItemFromDb(MongoClientWrapper, config.collectionMaxItemName, function(err, maxItemТreated) {
 		if (err) {
 			return deferred.reject(err);
 		}
 
 		getMaxItem({
-			'maxItemFromStorage': maxItemFromDb,
+			'maxItemТreated': maxItemТreated,
 			'deferred': options.deferred
 		});
 	})
@@ -43,13 +43,13 @@ function getMaxItemFromDb(options) {
 
 function getMaxItemFromStorage(options) {
 	var deferred = options.deferred;
-	Item.getMaxItemFromStorage(function(err, maxItemFromStorage) {
+	Item.getMaxItemFromStorage(function(err, maxItemТreated) {
 		if (err) {
 			return deferred.reject(err);
 		}
 
 		getMaxItem({
-			'maxItemFromStorage': maxItemFromStorage,
+			'maxItemТreated': maxItemТreated,
 			'deferred': options.deferred
 		});
 	})
@@ -64,8 +64,8 @@ function getMaxItem(options) {
 		}
 
 		createRanges({
-			"maxItemFromStorage": options.maxItemFromStorage,
-			"maxItem": maxItem,
+			'maxItemТreated': options.maxItemТreated,
+			'maxItem': maxItem,
 			'deferred': options.deferred
 		});
 	})
@@ -73,7 +73,7 @@ function getMaxItem(options) {
 
 function createRanges(options) {
 	var deferred = options.deferred,
-		firstItem = options.maxItemFromStorage + 1,
+		firstItem = options.maxItemТreated + 1,
 		lastItem = options.maxItem | 0,
 		lastItem = lastItem;
 
@@ -113,19 +113,19 @@ function poll(options) {
 				return whilstCallback(err);
 			}
 
-			parser.parseDataAsync(items, function(err) {
+			Item.saveMaxItemToDb(MongoClientWrapper, config.collectionMaxItemName, range[0], function(err) {
 				if (err) {
 					return whilstCallback(err);
 				}
-				Item.saveMaxItemToDb(MongoClientWrapper, config.collectionMaxItemName, range[0], function(err) {
-					if(err) {
+
+				parser.parseDataAsync(items, function(err) {
+					if (err) {
 						return whilstCallback(err);
 					}
 
 					whilstCallback();
-				})
+				});
 			});
-
 		});
 	}, function(err) {
 

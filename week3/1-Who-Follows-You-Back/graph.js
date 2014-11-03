@@ -1,97 +1,136 @@
-function Node(id, data) {
-	this.id = id;
-	this.data = (data !== undefined) ? data : {};
-};
-
-function Edge(source, target) {
-	this.source = source;
-	this.target = target;
-};
-
 function DirectedGraph() {
-	this._nodes = [];
-	this._edges = [];
-	this._adjacency = {};
-
-	this._nodeSet = [];
+	this._nodes = {};
+	this._nodesCount = 0;
+	this._edgesCount = 0;
 };
 
-function addNode(node) {
-	if (!(node.id in this._nodeSet)) {
-		this._nodes.push(node);
+DirectedGraph.prototype._addNode = function(node) {
+	if (!this._hasNode(node)) {
+		this._nodesCount++;
+		return this._nodes[node] = {
+			_outerEdges: {},
+			_innerEdges: {} // For further cases
+		};
 	}
-
-	this._nodeSet[node.id] = node;
-	return node;
 };
 
-function getNode(nodeId, data) {
-	return new Node(nodeId, data);
+DirectedGraph.prototype._hasNode = function(node) {
+	return !!this._nodes[node];
 };
 
-function getEdge(nodeA, nodeB) {
-	return new Edge(nodeA, nodeB);
+DirectedGraph.prototype._getNode = function(node) {
+	return this._nodes[node];
 };
 
 DirectedGraph.prototype.addEdge = function(nodeA, nodeB) {
-	var exists = null,
-		edge = null,
-		nodeAObj = getNode(nodeA),
-		nodeBObj = getNode(nodeB);
+	var self = this,
+		edgeBetween = null,
+		nodeFrom = null,
+		nodeTo = null;
 
-	addNode.call(this, nodeAObj);
-	addNode.call(this, nodeBObj);
-	edge = getEdge.call(this, nodeAObj, nodeBObj);
+	if (this._hasEdge(nodeA, nodeB)) {
+		return;
+	}
 
-	exists = this._edges.some(function(e) {
-		if (edge.source.id === e.source.id &&
-			edge.target.id === e.target.id) {
-			return true;
+	[nodeA, nodeB].forEach(function(node) {
+		if (!self._hasNode(node)) {
+			self._addNode(node);
 		}
 	});
 
-	if (exists === false) {
-		this._edges.push(edge);
+	nodeFrom = this._getNode(nodeA);
+	nodeTo = this._getNode(nodeB);
+
+	if (!nodeFrom || !nodeTo) {
+		return;
 	}
 
-	if (!(edge.source.id in this._adjacency)) {
-		this._adjacency[edge.source.id] = {};
+	edgeBetween = {
+		"hasEdge": true
+	};
+	nodeFrom._outerEdges[nodeB] = edgeBetween;
+	nodeTo._innerEdges[nodeA] = edgeBetween;
+
+	this._edgesCount++;
+	return edgeBetween;
+};
+
+DirectedGraph.prototype._hasEdge = function(nodeA, nodeB) {
+	var nodeFrom = this._getNode[nodeA],
+		nodeTo = this._getNode[nodeB];
+
+	if (!nodeFrom || !nodeTo) {
+		return false;
 	}
 
-	if (!(edge.target.id in this._adjacency[edge.source.id])) {
-		this._adjacency[edge.source.id][edge.target.id] = edge;
+	return !!nodeFrom._outerEdges[nodeB];
+};
+
+DirectedGraph.prototype._getEdge = function(nodeA, nodeB) {
+	var nodeFrom = this._getNode(nodeA),
+		nodeTo = this._getNode(nodeB);
+
+	if (!nodeFrom || !nodeTo) {
+		return null;
 	}
+
+	return nodeFrom._outerEdges[nodeB];
 };
 
 DirectedGraph.prototype.getNeighborsFor = function(node) {
+	var node = this._getNode(node),
+		neighbors = {};
 
+	if (!node) {
+		return null;
+	}
+
+	for (neighbor in node._outerEdges) {
+		if(node._outerEdges.hasOwnProperty(neighbor)) {
+			neighbors[neighbor] = this._getNode(neighbor);
+		}
+	}
+
+	return neighbors;
 };
 
-function hasPath(nodeAObj, nodeBObj, visited) {
-	if(nodeAObj === nodeBObj && visited.indexOf(nodeAObj) === -1) {
-		return true;
-	} else {
-		
-	}
-}
-
 DirectedGraph.prototype.pathBetween = function(nodeA, nodeB) {
-	var nodeAObj = this._nodeSet[nodeA],
-		nodeBObj = this._nodeSet[nodeB];
+	var self = this,
+		queue = [],
+		visited = {},
+       	nodeFrom = this._getNode(nodeA),
+		nodeTo = this._getNode(nodeB),
+		next = null;
 
-	Object.keys(this._adjacency[nodeAObj.id]).some(function(node) {
-		var visited = [];
-		visited.push(nodeAObj);
-		if(hasPath.call(this, node, nodeBObj, visited)) {
-			return true;
-		};
-	});
+    if (!nodeFrom || !nodeTo) {
+		return null;
+	}
+
+	visited[nodeA] = true;
+	next = nodeFrom;
+
+    while (next) {
+        for (node in next._outerEdges) {
+        	if(next._outerEdges.hasOwnProperty(node)) {
+	        	if(node === nodeB) {
+	        		return true;
+	        	}
+
+	        	if(visited[node]) {
+	        		continue;
+	        	}
+
+	        	visited[node] = true;
+                queue.push(this._getNode(node));
+            }
+        }
+        next = queue.shift();
+    }
+    return false;
 };
 
 DirectedGraph.prototype.toString = function() {
 
 };
-
-
 
 module.exports = DirectedGraph;

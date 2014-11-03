@@ -1,1 +1,1 @@
-var graph = require("./graph");
+var Graph = require("./graph");

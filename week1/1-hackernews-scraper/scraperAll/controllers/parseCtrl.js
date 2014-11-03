@@ -10,13 +10,13 @@ var Q = require('q'),
 	MongoClientWrapper = require("../configs/mongodb").MongoClientWrapper;
 
 storage.initSync({
-	dir:'../../../data/storage',
-    stringify: JSON.stringify,
-    parse: JSON.parse,
-    encoding: 'utf8',
-    logging: false,
-    continuous: false,
-    interval: false
+	dir: '../../../data/storage',
+	stringify: JSON.stringify,
+	parse: JSON.parse,
+	encoding: 'utf8',
+	logging: false,
+	continuous: false,
+	interval: false
 });
 
 module.exports = {
@@ -74,7 +74,7 @@ function asyncWhile(tasks, oper, done) {
 function extractKeywordsAsync(data, callback) {
 	Keyword.countKeywords(data, storage)
 		.then(function(vals) {
-			Keyword.saveKeywordsCountsToDb(MongoClientWrapper, config.collectionKeywordsName, vals)
+			Keyword.saveKeywordsCountsToDb(MongoClientWrapper, config.collectionKeywordsName, vals);
 		})
 		.then(function() {
 			callback();

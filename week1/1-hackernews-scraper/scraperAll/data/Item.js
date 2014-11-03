@@ -75,42 +75,50 @@ function getMaxItemFromDb(MongoClientWrapper, collectionName, callback) {
 
 	mongoClient.connection()
 		.then(function(cl) {
-				cl.getCollection(collectionName).findOne({ maxItem: { $exists: true } }, function(err, result) {
-						if (err) {
-							return callback(err);
-						}
+			cl.getCollection(collectionName).findOne({
+				"var": "maxItem"
+			}, function(err, result) {
+				if (err) {
+					return callback(err);
+				}
 
-						if (result) {
-							callback(null, item);
-						} else {
-							callback(null, 0);
-						}
-						cl.closeDb();
-					})
-			}, function(err) {
-				callback(err);
-			}
-		);
-	};
+				if (result) {
+					callback(null, result.val);
+				} else {
+					callback(null, 0);
+				}
+				cl.closeDb();
+			})
+		}, function(err) {
+			callback(err);
+		});
+};
 
 
-	function saveMaxItemToDb(MongoClientWrapper, collectionName, maxItem, callback) {
-		var mongoClient = new MongoClientWrapper();
+function saveMaxItemToDb(MongoClientWrapper, collectionName, maxItem, callback) {
+	var mongoClient = new MongoClientWrapper();
 
-		mongoClient.connection()
-			.then(function(cl) {
-					cl.getCollection(collectionName).update({
-						"maxItem": maxItem
-					}, function(err, count) {
-						if (err) {
-							return callback(err);
-						}
+	mongoClient.connection()
+		.then(function(cl) {
+				cl.getCollection(collectionName).update({
+					"var": "maxItem"
+				}, {
+					$set: {
+						"val": maxItem
+					}
+				}, {
+					upsert: true,
+					multi: false
+				}, function(err, count) {
+					if (err) {
+						return callback(err);
+					}
 
-						callback();
-					});
-
-				},
-				function(err) {
-					callback(err);
+					cl.closeDb();
+					callback();
 				});
-	};
+			},
+			function(err) {
+				callback(err);
+			});
+};

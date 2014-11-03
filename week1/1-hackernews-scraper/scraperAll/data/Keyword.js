@@ -45,7 +45,7 @@ module.exports = {
 	saveKeywordsCountsToFile: function(vals) {
 		var deferred = Q.defer();
 		filesHelper.writeToFile(histogramFilePath, JSON.stringify(vals), function(err) {
-			if(err) {
+			if (err) {
 				console.log(err);
 			}
 
@@ -53,8 +53,45 @@ module.exports = {
 		});
 		return deferred.promise;
 	},
-	saveKeywordsCountsToDb: function(MongoClientWrapper, config.collectionKeywordsName, vals) {
+	saveKeywordsCountsToDb: function(MongoClientWrapper, collectionName, vals) {
+		var deferred = Q.defer();
 		var mongoClient = new MongoClientWrapper();
-		throw "Not Implemented!";
+
+		mongoClient.connection()
+			.done(function(cl) {
+				var collection = cl.getCollection(collectionName);
+
+				var count = 0,
+					itemsUpdated = 0;
+
+				vals.forEach(function(doc) {
+					count++;
+					var keyword = Object.keys(doc)[0];
+					collection.update({
+						"keyword": keyword
+					}, {
+						$set: {
+							"matches": doc[keyword]
+						}
+					}, {
+						upsert: true,
+						multi: false
+					}, function(err) {
+						if(err) {
+							console.log("Error: " + err);
+						}
+
+						itemsUpdated++;
+
+						if(itemsUpdated === count) {
+							console.log("Keywords saved to db!");
+							cl.closeDb();
+						}
+					});
+				});
+
+				deferred.resolve();
+			});
+		return deferred.promise;
 	}
 }
