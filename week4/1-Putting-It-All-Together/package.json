@@ -1,0 +1,20 @@
+{
+  "name": "1-Putting-It-All-Together",
+  "version": "1.0.0",
+  "description": "So far, we have finished the first part in our NodeJS Journey.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.9.2",
+    "cookie-parser": "^1.3.3",
+    "express": "^4.10.1",
+    "jade": "^1.7.0",
+    "mongoose": "^3.8.18",
+    "path": "^0.4.9",
+    "q": "^1.0.1"
+  }
+}

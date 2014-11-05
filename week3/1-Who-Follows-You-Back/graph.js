@@ -1,3 +1,5 @@
+var os = require('os');
+
 function DirectedGraph() {
 	this._nodes = {};
 	this._nodesCount = 0;
@@ -79,15 +81,15 @@ DirectedGraph.prototype._getEdge = function(nodeA, nodeB) {
 
 DirectedGraph.prototype.getNeighborsFor = function(node) {
 	var node = this._getNode(node),
-		neighbors = {};
+		neighbors = [];
 
 	if (!node) {
 		return null;
 	}
 
 	for (neighbor in node._outerEdges) {
-		if(node._outerEdges.hasOwnProperty(neighbor)) {
-			neighbors[neighbor] = this._getNode(neighbor);
+		if (node._outerEdges.hasOwnProperty(neighbor)) {
+			neighbors.push(neighbor);
 		}
 	}
 
@@ -98,39 +100,52 @@ DirectedGraph.prototype.pathBetween = function(nodeA, nodeB) {
 	var self = this,
 		queue = [],
 		visited = {},
-       	nodeFrom = this._getNode(nodeA),
+		nodeFrom = this._getNode(nodeA),
 		nodeTo = this._getNode(nodeB),
 		next = null;
 
-    if (!nodeFrom || !nodeTo) {
+	if (!nodeFrom || !nodeTo) {
 		return null;
 	}
 
 	visited[nodeA] = true;
 	next = nodeFrom;
 
-    while (next) {
-        for (node in next._outerEdges) {
-        	if(next._outerEdges.hasOwnProperty(node)) {
-	        	if(node === nodeB) {
-	        		return true;
-	        	}
+	while (next) {
+		for (node in next._outerEdges) {
+			if (next._outerEdges.hasOwnProperty(node)) {
+				if (node === nodeB) {
+					return true;
+				}
 
-	        	if(visited[node]) {
-	        		continue;
-	        	}
+				if (visited[node]) {
+					continue;
+				}
 
-	        	visited[node] = true;
-                queue.push(this._getNode(node));
-            }
-        }
-        next = queue.shift();
-    }
-    return false;
+				visited[node] = true;
+				queue.push(this._getNode(node));
+			}
+		}
+		next = queue.shift();
+	}
+	return false;
 };
 
 DirectedGraph.prototype.toString = function() {
+	var result = "";
+	for (var node in this._nodes) {
+		if (this._nodes.hasOwnProperty(node)) {
+			result += node + ": [ "
 
+			var neighbors = this.getNeighborsFor(node);
+			neighbors.forEach(function(neighbor) {
+				result += neighbor + " ";
+			})
+		}
+
+		result += "]" + os.EOL;
+	}
+	return result;
 };
 
 module.exports = DirectedGraph;
