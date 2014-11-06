@@ -1,5 +1,5 @@
 var expect = require("chai").expect,
-	Graph = require("../graph.js"),
+	Graph = require("../graph"),
 	os = require('os');
 
 describe('Test Graph', function() {
