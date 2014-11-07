@@ -1,4 +1,4 @@
-var Subscriber = require("../data/Subscriber");
+var Subscriber = require("../models/Subscriber");
 
 module.exports = {
 	subscribe: subscribe,

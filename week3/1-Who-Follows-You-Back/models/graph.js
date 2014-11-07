@@ -135,15 +135,15 @@ DirectedGraph.prototype.toString = function() {
 	var result = "";
 	for (var node in this._nodes) {
 		if (this._nodes.hasOwnProperty(node)) {
-			result += node + ": [ "
-
 			var neighbors = this.getNeighborsFor(node);
-			neighbors.forEach(function(neighbor) {
-				result += neighbor + " ";
-			})
+			if(neighbors.length > 0) {
+				result += node + ": [ "
+				neighbors.forEach(function(neighbor) {
+					result += neighbor + " ";
+				});
+				result += "]" + os.EOL;
+			}
 		}
-
-		result += "]" + os.EOL;
 	}
 	return result;
 };

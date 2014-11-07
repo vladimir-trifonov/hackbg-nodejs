@@ -1,4 +1,4 @@
-var Subscriber = require("../data/Subscriber"),
+var Subscriber = require("../models/Subscriber"),
 	filesHelper = require('../common/filesHelper'),
 	Q = require('q'),
 	subscribersFilePath = '../subscribers.json',

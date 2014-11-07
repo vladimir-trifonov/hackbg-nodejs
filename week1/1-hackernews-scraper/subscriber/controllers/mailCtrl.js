@@ -1,6 +1,6 @@
 var nodemailer = require('nodemailer'),
-	Mail = require('../data/Mail'),
-	Confirm = require('../data/Confirm'),
+	Mail = require('../models/Mail'),
+	Confirm = require('../models/Confirm'),
 	config = require('../configs/config'),
 	transporter = nodemailer.createTransport({
 		service: 'Gmail',

@@ -1,5 +1,5 @@
 var Q = require('q'),
-	Item = require("../data/Item");
+	Item = require("../models/Item");
 
 module.exports = {
 	pollNews: pollNews,

@@ -1,4 +1,4 @@
-var User = require("../data/User"),
+var User = require("../models/User"),
 	config = require("../configs/config"),
 	Q = require('q');
 

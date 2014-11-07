@@ -1,6 +1,6 @@
 var Q = require('q'),
-	Item = require("../data/Item"),
-	User = require("../data/User");
+	Item = require("../models/Item"),
+	User = require("../models/User");
 
 module.exports = {
 	proceedData: function(data) {

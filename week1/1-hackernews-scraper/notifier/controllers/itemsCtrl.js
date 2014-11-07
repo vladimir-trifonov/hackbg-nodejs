@@ -1,4 +1,4 @@
-var Item = require("../data/Item"),
+var Item = require("../models/Item"),
 	config = require("../configs/config"),
 	Q = require('q');
 

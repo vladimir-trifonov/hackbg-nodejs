@@ -1,4 +1,4 @@
-var Mail = require('../data/Mail'),	
+var Mail = require('../models/Mail'),	
 	Q = require('q');
 
 module.exports = {

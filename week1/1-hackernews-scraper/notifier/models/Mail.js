@@ -1,5 +1,4 @@
 var nodemailer = require('nodemailer'),
-	Mail = require('../data/Mail'),
 	config = require('../configs/config'),
 	mailDefaultOptions = config.nodemailer.defaultOptions,
 	transporter = nodemailer.createTransport({

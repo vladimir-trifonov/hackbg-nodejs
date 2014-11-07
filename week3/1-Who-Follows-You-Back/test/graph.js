@@ -78,4 +78,4 @@ describe('Test Graph', function() {
 			);
 		})
 	});
-})
+});
