@@ -1,4 +1,6 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+	Contact = require('../models/Contact'),
+	Group = require('../models/Group');
 
 module.exports = function(config) {
 	mongoose.connect(config.db);
