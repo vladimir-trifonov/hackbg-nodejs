@@ -11,7 +11,7 @@ var async = require('async'),
 
 function Sitemap(options) {
     this.options = util._extend({
-        max: 10
+        max: 500
     }, options);
     this.map = new Map();
     this.linksCount = 0;
@@ -33,6 +33,8 @@ Sitemap.prototype.createSitemap = function() {
             self.robotsParser = parser;
             self.emit('starttask');
             self.emit('crawlurl', self._getUrl({"url":self.options.url}));
+        } else {
+            console.log("Robots error or can't find " + self.options.url + '/robots.txt');
         }
     });
 }
@@ -105,7 +107,6 @@ Sitemap.prototype._canFetch = function(path) {
 Sitemap.prototype._urlTask = function(url) {
     var self = this,
         path = this._getPath(url);
-
     this._canFetch(path).then(function() {
         request(url, function(error, response, body) {
             if (!error && response.statusCode == 200) {
@@ -164,7 +165,7 @@ Sitemap.prototype._linksTask = function(url, links) {
                     !self.map._hasNode(href) &&
                     self.linksCount < self.options.max) {
                     self.linksCount++;
-                    self.emit('starttask');
+                    self.emit('starttask');                    
                     setImmediate(function() {
                         self.emit('crawlurl', href);
                     })

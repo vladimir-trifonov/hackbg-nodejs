@@ -20,13 +20,12 @@ module.exports = {
 	checkHasMap: function(req, res, next) {
 		var data = req.body;
 
-		if(!data.url) {
+		if(!data.url || !data.scheme) {
 			res.status(400);
-			res.end();
+			res.end("Error: Missing url or scheme!");
 			return;
 		}
-
-		data.url = Url.parse(data.url).hostname;
+		data.url = Url.parse(data.scheme + '://' + data.url).hostname;
 		var	crawlRequestInfo = storage.getItem(data.url),
 			hasMap = false;
 
