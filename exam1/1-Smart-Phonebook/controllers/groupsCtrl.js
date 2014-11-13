@@ -1,9 +1,8 @@
 var sanitize = require('mongo-sanitize'),
 	Group = require('mongoose').model('Group'),
 	contactsCtrl = require('./contactsCtrl'),
-	mongoose = require('mongoose'),
-	async = require('async');
-utils = require('../common/utils');
+	async = require('async'),
+	utils = require('../common/utils');
 
 module.exports = {
 	checkAddGroup: function(req, res) {
@@ -12,51 +11,63 @@ module.exports = {
 		var contactCommonWords = contact.cw.join(' ').toLowerCase().split(' '),
 			contactId = contact.id;
 
-		contactsCtrl.getOtherCommonWords(contact, contactCommonWords).then(function(data) {
-				var otherCommonWords = data.otherCommonWords,
-					fuzzyGroups = data.fuzzyGroups;
+		var promise = contactsCtrl.getOtherCommonWords(contact, contactCommonWords);
+		promise.then(function(data) {
+			var otherCommonWords = data.otherCommonWords,
+				fuzzyGroups = data.fuzzyGroups;
 
-				contactsCtrl.commonWordsToGroups(contact, otherCommonWords)
-					.then(function(collection) {
-							var calls = [];
+			contactsCtrl.commonWordsToGroups(contact, otherCommonWords)
+				.then(function(collection) {
+					var calls = [];
 
-							collection.forEach(function(groupObj) {
-								if (contactCommonWords.indexOf(groupObj._id) !== -1 && groupObj.count > 1) {
-									calls.push(function() {
-								        createOrAddToGroup({
-											"groupObj": groupObj,
-											"contactId": contactId
-										});
-								    });
-								}
+					collection.forEach(function(groupObj) {
+						if (contactCommonWords.indexOf(groupObj._id) !== -1 && groupObj.count > 1) {
+							calls.push(function() {
+						        createOrAddToGroup({
+									"groupObj": groupObj,
+									"contactId": contactId
+								});
+						    });
+						}
+					});
+
+					Object.keys(fuzzyGroups).forEach(function(contactWord) {
+						var fuzzyGroup = fuzzyGroups[contactWord];
+						calls.push(function() {
+					        createOrAddToFuzzyGroup({
+								"contactWord": contactWord,
+								"fuzzyGroup": fuzzyGroup,
+								"collection": collection,
+								"contactId": contactId
 							});
+					    });
+					});
 
-							Object.keys(fuzzyGroups).forEach(function(contactWord) {
-								var fuzzyGroup = fuzzyGroups[contactWord];
-								calls.push(function() {
-							        createOrAddToFuzzyGroup({
-										"contactWord": contactWord,
-										"fuzzyGroup": fuzzyGroup,
-										"collection": collection,
-										"contactId": contactId
-									});
-							    });
-							});
+					calls.forEach(function(fn) {
+						fn();
+					});
+				},
+				function(err) {
+					console.log(err);
+				});
+		},
+		function(err) {
+			console.log(err);
+		});
+	},
+	getAllGroups: function(req, res, next) {
+		Group.find({}, function(err, collection) {
+			if (err) {
+				return next(new Error('Groups could not be loaded!'));
+			}
 
-							async.parallel(calls, function(err) {
-							    if (err) {
-							        return console.log(err);
-							    }
-							});
-
-						},
-						function(err) {
-							console.log(err);
-						});
-			},
-			function(err) {
-				console.log(err);
+			res.json({
+				success: true,
+				data: collection
 			});
+
+			next();
+		});
 	},
 	removeAll: function(req, res, next) {
 		Group.remove({}, function(err) {
@@ -79,7 +90,7 @@ function createOrAddToGroup(data) {
 			return console.log('Group could not be find!');
 		}
 
-		if (group) {
+		if (group && typeof group.groupName === "string") {
 			Group.update({
 				groupName: groupName
 			}, {
@@ -87,7 +98,8 @@ function createOrAddToGroup(data) {
 					contacts: data.contactId
 				}
 			}, {
-				upsert: true
+				upsert: true,
+				multiple: true
 			}, function(err) {
 				if (err) {
 					return console.log('Group could not be updated!');
@@ -113,6 +125,7 @@ function createOrAddToFuzzyGroup(data) {
 	var fuzzyGroup = data.fuzzyGroup.map(function(fuzzyGroupName) {
 		return utils.capitaliseFirstLetter(fuzzyGroupName);
 	});
+	fuzzyGroup.push(utils.capitaliseFirstLetter(data.contactWord));
 
 	Group.findOne({
 		groupName: { $all: fuzzyGroup }
@@ -129,7 +142,8 @@ function createOrAddToFuzzyGroup(data) {
 					contacts: data.contactId
 				}
 			}, {
-				upsert: true
+				upsert: true,
+				multiple: true
 			}, function(err) {
 				if (err) {
 					return console.log('Fuzzy group could not be updated!');
@@ -143,8 +157,8 @@ function createOrAddToFuzzyGroup(data) {
 			});
 
 			var contactIds = [];
-			collection.forEach(function(groupObj) {
-				if(fuzzyGroup.indexOf(groupObj._id) !== -1) {
+			data.collection.forEach(function(groupObj) {
+				if(fuzzyGroup.indexOf(utils.capitaliseFirstLetter(groupObj._id)) !== -1) {
 					contactIds = contactIds.concat(groupObj.contactIds);
 				}
 			})

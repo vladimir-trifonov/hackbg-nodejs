@@ -5,8 +5,15 @@ var sanitize = require('mongo-sanitize'),
 
 module.exports = {
 	addContact: function(req, res, next) {
-		var data = req.body
-		cw = data.personIdentifier.split(' '),
+		var data = req.body;
+
+		if(!data.personIdentifier || !data.phoneNumber) {
+			res.status(400);
+			res.end();
+			return;
+		}
+
+		var cw = data.personIdentifier.split(' '),
 		newContact = new Contact({
 			phoneNumber: data.phoneNumber,
 			cw: cw

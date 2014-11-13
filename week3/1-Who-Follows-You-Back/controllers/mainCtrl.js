@@ -1,13 +1,13 @@
 var q = require('q'),
 	fs = require('fs'),
 	extend = require('util')._extend,
-	Graph = require("../models/graph"),
+	Graph = require("../lib/graph").Graph,
 	graphCtrl = require('./graphCtrl'),
 	WorkerQueue = require("../common/utils/workerQueue").WorkerQueue,
-	GitUser = require("../models/gitUser").GitUser;
+	GitUser = require("../lib/gitUser").GitUser;
 
 var defaults = {
-	'requestDelay': 0,
+	'requestDelay': 200,
 	'maxPagesCountPerIteraction': 5,
 	'maxWaitPageRequestCyclesPerUser': 20,
 	'maxUserRecordsPerPage': 30,

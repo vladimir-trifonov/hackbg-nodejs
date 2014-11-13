@@ -6,8 +6,9 @@ module.exports = function(app, express) {
 	router.post('/contacts', controllers.contactsCtrl.addContact, controllers.groupsCtrl.checkAddGroup);
 	router.get('/contacts/:contact_id', controllers.contactsCtrl.getContact);
 	router.get('/contacts/', controllers.contactsCtrl.getAllContacts);
+	router.get('/groups/', controllers.groupsCtrl.getAllGroups);
 	router['delete']('/contacts/:contact_id', controllers.contactsCtrl.removeContact);
-	router['delete']('/contacts/', controllers.contactsCtrl.removeAll, controllers.groupsCtrl.removeAll);
+	// router['delete']('/contacts/', controllers.contactsCtrl.removeAll, controllers.groupsCtrl.removeAll);
 
-	app.use('/', router);
+	app.use('/api', router);
 }

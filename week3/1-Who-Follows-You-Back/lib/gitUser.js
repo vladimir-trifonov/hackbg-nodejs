@@ -9,7 +9,7 @@ GitUser = function(name, options) {
 	this.name = name;
 	this.options = options;
 
-	this.EventEmitter
+	EventEmitter.call(this);
 
 	this.currentRequest = 0;
 	this.currentResponse = 0;
@@ -72,7 +72,7 @@ GitUser.prototype.getFollowings = function(repeatRequest, url) {
 
 		this.waitCycle++;
 		if (this.waitCycle === this.maxWaitCycles) {
-			this.stopRequests
+			this.stopRequests = true;
 		}
 	} else {
 		var requestOptions = extend({}, this.options.requestOptions),
