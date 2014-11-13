@@ -205,13 +205,18 @@ var testImg = [
 		[0, 1, 0],
 		[1, 0, 1]
 	],
+	xMarksTheSpotRGB = [
+		[{"r":1, "g":1, "b":0}, {"r":1, "g":1, "b":0}, {"r":1, "g":1, "b":0}],
+		[{"r":0, "g":1, "b":0}, {"r":0, "g":1, "b":0}, {"r":0, "g":0, "b":0}],
+		[{"r":0, "g":1, "b":0}, {"r":0, "g":0, "b":0}, {"r":0, "g":1, "b":0}]
+	],
 	verticalBlur = [
 		[0, 0.5, 0],
 		[0, 0, 0],
 		[0, 1, 0]
 	];
 
-convolution.monochrome(testImg, verticalBlur)
+convolution.rgb(xMarksTheSpotRGB, verticalBlur)
 	.then(function(blurredX) {
 		fs.writeFile('./img.json', JSON.stringify(blurredX), function(err) {
 			if (err) {

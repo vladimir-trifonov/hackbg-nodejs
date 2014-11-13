@@ -20,7 +20,11 @@ Image.prototype.init = function() {
 	for (j = 0; j < jMax; j++) {
 		this.imageOut[j] = [];
 		for (i = 0; i < iMax; i++) {
-			this.imageOut[j][i] = 0;
+			if(this.imageType === "rgb") {
+				this.imageOut[j][i] = {"r": 0, "g": 0, "b": 0};
+			} else {
+				this.imageOut[j][i] = 0;
+			}
 		}
 	}
 };
@@ -30,6 +34,9 @@ Image.prototype.getPixelColor = function(x, y) {
 		x >= this.fullSize.x1 ||
 		y < this.fullSize.y0 ||
 		y >= this.fullSize.y1) {
+		if(this.imageType === "rgb") {
+			return {"r": 0, "g": 0, "b": 0};
+		}
 		return 0;
 	}
 	return this.imageIn[y][x];
