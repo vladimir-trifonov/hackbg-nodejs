@@ -2,7 +2,7 @@ var q = require('q'),
 	util = require('util'),
 	EventEmitter = require('events').EventEmitter,
 	Image = require('./Image').Image,
-	multiplier = 10;
+	divider = 10;
 
 function Runner(imageData, imageType, kernel) {
 	var self = this;
@@ -25,10 +25,10 @@ util.inherits(Runner, EventEmitter);
 
 Runner.prototype.calcTasksData = function() {
 	if (this.numOfPixels > 10000) {
-		this.blockWidth = Math.floor(this.imgWidth / multiplier);
-		this.blockHeight = Math.floor(this.imgHeight / multiplier);
+		this.blockWidth = Math.floor(this.imgWidth / divider);
+		this.blockHeight = Math.floor(this.imgHeight / divider);
 
-		this.maxTaskId = (Math.ceil(this.imgWidth / multiplier) * Math.ceil(this.imgHeight / multiplier)) / 2;
+		this.maxTaskId = (Math.ceil(this.imgWidth / divider) * Math.ceil(this.imgHeight / divider)) / 2;
 	} else {
 		this.blockWidth = this.imgWidth;
 		this.blockHeight = this.imgWidth;
