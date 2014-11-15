@@ -214,9 +214,14 @@ var testImg = [
 		[0, 0.5, 0],
 		[0, 0, 0],
 		[0, 1, 0]
+	],
+	boxBlur = [
+		[1/9, 1/9, 1/9],
+		[1/9, 1/9, 1/9],
+		[1/9, 1/9, 1/9]
 	];
 
-convolution.rgb(xMarksTheSpotRGB, verticalBlur)
+convolution.rgb(xMarksTheSpotRGB, boxBlur)
 	.then(function(blurredX) {
 		fs.writeFile('./img.json', JSON.stringify(blurredX), function(err) {
 			if (err) {

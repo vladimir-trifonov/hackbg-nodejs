@@ -54,9 +54,17 @@ function applyKernel(imageData, imageType, kernel) {
 	if (!imageData || !kernel) {
 		deferred.reject();
 	} else {
+		var isKernelNormalized = isNormalized(kernel),
+			kernelValue = null;
+
+		if(isKernelNormalized) {
+			kernelValue = kernel[0][0];
+		} else {
+			kernelValue = kernel;
+		}
 		var runner = new Runner(imageData, imageType, {
-			value: kernel.value || kernel,
-			isNormalized: kernel.isNormalized || false,
+			value: kernel.value || kernelValue,
+			isNormalized: kernel.isNormalized || isKernelNormalized,
 			size: kernel.size || kernel.length
 		});
 
@@ -72,3 +80,17 @@ function applyKernel(imageData, imageType, kernel) {
 
 	return deferred.promise;
 };
+
+function isNormalized(kernel) {
+	var kernelSize = kernel.length,
+		value = kernel[0][0];
+
+	for (var j = 0; j < kernelSize; j++) {
+		for (var i = 0; i < kernelSize; i++) {
+			if(kernel[j][i] !== value) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
