@@ -1,9 +1,9 @@
 var express = require('express'),
 	app = express(),
-	config = require('./config/config');
+	env = process.env.NODE_ENV || 'development',
+	config = require('./config/config')[env];
 
-throw "It's not completed yet! :)"
-
+require('./config/mongoose')(config);
 require('./config/express')(app);
 require('./config/routes')(app);
 

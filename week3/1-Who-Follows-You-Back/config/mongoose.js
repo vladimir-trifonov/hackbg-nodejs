@@ -1,4 +1,5 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+	Contact = require('../models/GitUser');
 
 module.exports = function(config) {
 	mongoose.connect(config.db);

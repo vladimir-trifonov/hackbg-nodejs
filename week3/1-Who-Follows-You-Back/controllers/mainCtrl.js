@@ -1,77 +1,99 @@
-var q = require('q'),
-	fs = require('fs'),
-	extend = require('util')._extend,
-	Graph = require("../lib/graph").Graph,
-	graphCtrl = require('./graphCtrl'),
-	WorkerQueue = require("../common/utils/workerQueue").WorkerQueue,
-	GitUser = require("../lib/gitUser").GitUser;
-
-var defaults = {
-	'requestDelay': 200,
-	'maxPagesCountPerIteraction': 5,
-	'maxWaitPageRequestCyclesPerUser': 20,
-	'maxUserRecordsPerPage': 30,
-	'maxGraphDepth': 1,
-	'currentGraphDepth': 0,
-	'gitAPI_Users': 'https://api.github.com/users/',
-	'gitPathUrl_Following': '/following?page=',
-	'graph': null,
-	'WorkerQueue': null,
-	'requestOptions': {
-		headers: {
-			'User-Agent': 'request'
-		}
-	},
-	'gitAppCredentials': {
-		client_id: '2f9bf92952c109ec00a1',
-		client_secret: 'f1620e61e644cfd25ff2e267a373f03deb686cf0'
-	},
-	'db': {}
-};
+var GitUser = require('mongoose').model('GitUser'),
+	Q = require('q');
 
 module.exports = {
-	createGraphFor: createGraphFor
+	addGraph: addGraph,
+	getGraph: getGraph,
+	checkIfExists: checkIfExists
+};
+
+function addGraph(req, res, next) {
+	var data = req.body,
+		userName = null;
+
+	if (!data.name) {
+		res.status(400);
+		res.end();
+		return;
+	}
+
+	userName = sanitize(data.name);
+
+	GitUser.findOne({
+		"name": userName
+	}, function(err, user) {
+		if (err) {
+			return next(new Error(err));
+		}
+
+		if (user === null) {
+			var newGitUser = new GitUser({
+				name: userName,
+				status: 'pending'
+			});
+			GitUser.save();
+			res.send(newGitUser.id);
+
+			next();
+		} else {
+			res.send(user.id);
+		}
+	})
 }
 
-function createGraphFor(req, res, next) {
-	var data = req.body,
-		userName = data.name;
+function getGraph(req, res, next) {
+	getGraphFromDb(req, res, next).done(function(result) {
+		res.send(result);
+	});
+}
 
-	var initialUser = newUser(userName);
-	initialUser.setOption('currentGraphDepth', 0);
-};
+function checkIfExists(req, res, next) {
+	var result = getGraphFromDb(req, res, next).done(function(result) {
+		if(!result.data) {
+			return res.send(result);
+		}
 
-function getDefaultOptions() {
-	var options = extend({}, defaults, {
-		graph: new Graph(),
-		WorkerQueue: WorkerQueue,
-		visited = {},
-		threads = {},
-		threadsCount = 0
+		res.locals.graph = result.data.followings;
+		next();
+	});
+}
+
+function getGraphFromDb(req, res, next) {
+	var id = null
+		deferred = Q.defer();
+
+	if (!req.params.graphId) {
+		res.status(400);
+		res.end();
+		return;
+	}
+
+	id = sanitize(req.params.contact_id);
+
+	GitUser.findOne({
+		_id: id
+	},
+	function(err, gitUser) {
+		if (err) {
+			return next(new Error(err));
+		}
+
+		var result = {
+			data: null
+		};
+		if (gitUser !== null) {
+			if(gitUser.status === "pending") {
+				result.msg = "Graph is not ready!";
+			} else if(gitUser.status === "ready"){
+				result.data = gitUser.followings;
+			}
+		} else {
+			result.msg = "Graph not exists!";
+		}
+
+		deferred.resolve(result);
 	});
 
-	return options;
-};
-
-function addThread(threadId) {
-	this.incOption(threadsCount);
-	this.getOption(threads)[threadId] = true;
-};
-
-function threadCompleted(threadId) {
-	this.decOption(threadsCount);
-	this.getOption(threads)[threadId] = false;
-};
-
-function saveOnAllCompleted() {
-	if (this.getOption(threadsCount) === 0) {
-		process.nextTick(function() {
-			fs.writeFile('./graphExample.txt', graphCtrl.toString(self.options.graph), function(err) {
-				if (err) {
-					console.log(err);
-				}
-			});
-		});
-	}
-};
+	return deferred.promise;
+}
 

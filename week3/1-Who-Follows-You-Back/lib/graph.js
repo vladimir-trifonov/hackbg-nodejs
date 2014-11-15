@@ -148,4 +148,28 @@ DirectedGraph.prototype.toString = function() {
 	return result;
 };
 
+DirectedGraph.prototype.toArray = function(nodeKeyName, edgesCollectionName) {
+	var self = this,
+		result = [],
+		nodeKeyName = nodeKeyName || "node",
+		edgesCollectionName = edgesCollectionName || "outerEdges";
+
+	Object.keys(this._nodes).forEach(function(key) {
+		var obj = {};
+		obj[nodeKeyName] = key;
+		obj[edgesCollectionName] = [];
+		Object.keys(self._nodes[key]._outerEdges).forEach(function(key) {
+			obj[edgesCollectionName].push(key);
+		});
+		if (obj[edgesCollectionName].length > 0) {
+			result.push(obj);
+		}
+	});
+	return result;
+};
+
+DirectedGraph.prototype.load = function(data) {
+
+};
+
 module.exports.Graph = DirectedGraph;

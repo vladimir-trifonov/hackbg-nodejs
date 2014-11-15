@@ -95,7 +95,15 @@ module.exports = {
 		});
 	},
 	removeContact: function(req, res, next) {
-		var id = sanitize(req.params.contact_id);
+		var id = null;
+
+		if(!req.params.contact_id) {
+			res.status(400);
+			res.end();
+			return;
+		}
+
+		id = sanitize(req.params.contact_id);
 
 		Contact.remove({
 			_id: id
