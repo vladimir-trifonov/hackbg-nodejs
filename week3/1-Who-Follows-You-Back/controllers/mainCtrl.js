@@ -1,4 +1,5 @@
 var GitUser = require('mongoose').model('GitUser'),
+	sanitize = require('mongo-sanitize'),
 	Q = require('q');
 
 module.exports = {
@@ -31,9 +32,10 @@ function addGraph(req, res, next) {
 				name: userName,
 				status: 'pending'
 			});
-			GitUser.save();
+			newGitUser.save();
 			res.send(newGitUser.id);
 
+			res.locals.graphId = newGitUser.id;
 			next();
 		} else {
 			res.send(user.id);
@@ -53,7 +55,7 @@ function checkIfExists(req, res, next) {
 			return res.send(result);
 		}
 
-		res.locals.graph = result.data.followings;
+		res.locals.data = result.data;
 		next();
 	});
 }
@@ -68,7 +70,7 @@ function getGraphFromDb(req, res, next) {
 		return;
 	}
 
-	id = sanitize(req.params.contact_id);
+	id = sanitize(req.params.graphId);
 
 	GitUser.findOne({
 		_id: id

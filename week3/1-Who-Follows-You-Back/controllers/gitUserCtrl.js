@@ -7,7 +7,7 @@ var q = require('q'),
 	GitUserResource = require("../resources/gitUserResource").GitUserResource,
 	GitUser = require('mongoose').model('GitUser'),
 	defaults = {
-		'requestDelay': 200,
+		'requestDelay': 400,
 		'maxPagesCountPerIteraction': 2,
 		'maxUserRecordsPerPage': 30,
 		'maxGraphDepth': 4,
@@ -48,16 +48,17 @@ var newgGitUserResource = (function() {
 function createGraphFor(req, res, next) {
 	var data = req.body,
 		userName = data.name,
-		depth = data.depth || 4;	
+		depth = data.depth || 1,
+		options = {
+			'graphId': res.locals.graphId,
+			'graphName': userName
+		};
 
-	if (depth) {
-		newgGitUserResource(userName, {
-			'maxGraphDepth': depth
-		}, true);
-	} else {
-		newgGitUserResource(userName, {}, true);
+	if (typeof depth !== "undefined") {
+		options.maxGraphDepth = depth;
 	}
 
+	newgGitUserResource(userName, options, true);
 	res.end();
 };
 
@@ -77,13 +78,15 @@ function getInitOptions(options) {
 };
 
 function addThread(threadId) {
+	console.log("Added: " + threadId);
 	this.options.threads.push(threadId);
 };
 
 function threadCompleted(threadId) {
+	console.log("Completed: " + threadId);
 	this.options.threads.splice(this.options.threads.indexOf(threadId), 1);
-	if(this.options.threads.length === 0) {
-		this.saveOnAllCompleted.call(this);
+	if (this.options.threads.length === 0) {
+		saveOnAllCompleted.call(this);
 	}
 };
 
@@ -92,24 +95,19 @@ function initGitUserEventHandlers(gitUserResource) {
 		var self = this,
 			threadId = this.getThreadId();
 
-		addThread.call(self, threadId + '/' + id);
-		(function(data) {
-			process.nextTick(function() {
-				graphCtrl.createEdges(self.options.graph, self.name, data);
-				threadCompleted.call(self, threadId + '/' + id);
-			});
-		})(data);
+		graphCtrl.createEdges(self.options.graph, self.name, data);
 
+		if (this.options.depth.length < this.options.maxGraphDepth ||
+			this.options.depth.indexOf(threadId) !== -1) {
+			if (this.options.depth.indexOf(threadId) === -1) {
+				this.options.depth.push(threadId);
+			}
 
-		if (this.options.depth.indexOf(threadId) === -1) {
-			this.options.depth.push(threadId);
-		}
-
-		if (this.options.depth.length < this.options.maxGraphDepth) {
 			data.forEach(function(neighbor) {
 				var neighborName = neighbor.login;
 				if (neighborName && !self.options.visited[neighborName]) {
 					self.options.visited[neighborName] = true;
+
 					newgGitUserResource(neighborName, self.options, false);
 				}
 			})
@@ -124,22 +122,31 @@ function initGitUserEventHandlers(gitUserResource) {
 function saveOnAllCompleted() {
 	var self = this;
 	if (this.options.threads.length === 0) {
-		setImmediate(function() {
-			fs.writeFile('../graphExample.txt', graphCtrl.toString(self.options.graph), function(err) {
-				if (err) {
-					console.log(err);
-				}
-			});
-		});
+		var graph = graphCtrl.toArray(self.options.graph, "name", "following");
+		GitUser.update({
+			_id: this.options.graphId
+		}, {
+			$set: {
+				status: "ready",
+				followings: graph
+			}
+		}, {
+			upsert: true,
+			multiple: true
+		}, function(err) {
+			if (err) {
+				return console.log('Group could not be updated!');
+			}
+		})
 	}
 };
 
 function following() {
-	throw "Not Implemented!";
+	return graphCtrl.getNeighborsFor(self.options.graph, this.options.graphName);
 }
 
-function isFollowing() {
-	throw "Not Implemented!";
+function isFollowing(name) {
+	return graphCtrl.pathBetween(self.options.graph, this.options.graphName, name);
 }
 
 function stepsTo() {
@@ -147,7 +154,30 @@ function stepsTo() {
 }
 
 function mutuallyFollow(req, res, next) {
-	throw "Not Implemented!";
+	var data = res.locals.data;
+
+	if (!req.params.username) {
+		res.status(400);
+		res.end();
+		return;
+	}
+
+	var graph = new Graph();
+	graphCtrl.load(graph, data.followings);
+
+	var first = graphCtrl.pathBetween(graph, data.name, req.params.username),
+		second = graphCtrl.pathBetween(graph, req.params.username, data.name),
+		result = {};
+
+	if (first === true && second === true) {
+		result.relation = "mutual";
+	} else if (first === true) {
+		result.relation = "first";
+	} else if (second === true) {
+		result.relation = "second";
+	}
+
+	res.send(result);
 }
 
 module.exports = {

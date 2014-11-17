@@ -1,6 +1,12 @@
-var express = require("express"),
-      app = express();
+var express = require('express'),
+	app = express(),
+	env = process.env.NODE_ENV || 'development',
+	config = require('./server/config/config')[env];
 
-app.use(express.static(__dirname + "/public"))
+require('./server/config/mongoose')(config);
+require('./server/config/passport')();
+require('./server/config/express')(app, config);
+require('./server/config/routes')(app);
 
-app.listen(3000);
+app.listen(config.port);
+console.log('Server running at port: ' + config.port);

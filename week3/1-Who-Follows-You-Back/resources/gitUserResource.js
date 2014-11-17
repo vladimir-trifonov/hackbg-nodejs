@@ -36,8 +36,12 @@ GitUserResource.prototype.getFollowings = function(repeatRequest, url) {
 	var self = this;
 
 	if (this.stopRequests) {
-		this.emit('completed', this.threadId);
-		return true;
+		if(this.currentRequest.length === this.currentResponse.length) {
+			this.emit('completed', this.threadId);
+			return true;
+		}
+
+		return;
 	}
 
 	if (!repeatRequest && this.currentResponse.length === this.remainRequest) {
@@ -56,12 +60,11 @@ GitUserResource.prototype.getFollowings = function(repeatRequest, url) {
 			url = url || this.options.gitAPI_Users +
 			this.name +
 			this.options.gitPathUrl_Following +
-			this.currentRequest.length +
+			(this.currentRequest.length + 1) +
 			"&client_id=" +
 			this.options.gitAppCredentials.client_id +
 			"&client_secret=" +
 			this.options.gitAppCredentials.client_secret;
-
 		requestOptions.url = url;
 		this.currentThreadId.push(this.currentRequest.length);
 

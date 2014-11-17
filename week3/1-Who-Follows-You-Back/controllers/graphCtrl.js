@@ -6,5 +6,17 @@ module.exports = {
 	},
 	toString: function(graph) {
 		return graph.toString();
+	},
+	toArray: function(graph, nodeKeyName, edgesCollectionName) {
+		return graph.toArray(nodeKeyName, edgesCollectionName);
+	},
+	pathBetween: function(graph, nameA, nameB) {
+		return graph.pathBetween(nameA, nameB);
+	},
+	getNeighborsFor: function(graph, name) {
+		return graph.getNeighborsFor(name);
+	},
+	load: function(graph, graphData) {
+		
 	}
 }
