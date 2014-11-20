@@ -1,0 +1,2 @@
+Vince Allen,http://vinceallen.com/,"Brooklyn, NY"
+John Resig,http://ejohn.org/,"Brooklyn, NY"

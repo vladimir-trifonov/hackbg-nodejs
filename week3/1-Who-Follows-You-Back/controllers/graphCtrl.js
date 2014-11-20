@@ -16,7 +16,7 @@ module.exports = {
 	getNeighborsFor: function(graph, name) {
 		return graph.getNeighborsFor(name);
 	},
-	load: function(graph, graphData) {
-		
+	load: function(graph, parentName, childrens) {
+		throw "Not Implemented!";
 	}
 }

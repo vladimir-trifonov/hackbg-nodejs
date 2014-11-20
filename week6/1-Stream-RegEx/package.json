@@ -1,0 +1,14 @@
+{
+  "name": "1-Stream-RegEx",
+  "version": "1.0.0",
+  "description": "Write a constructor, inheriting from `Transform` stream, that takes as an argument a regular expression as an argument. The constructed stream object should output only the chunks input to it, that match the regular expression.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.10.2"
+  }
+}

@@ -5,7 +5,8 @@ var GitUser = require('mongoose').model('GitUser'),
 module.exports = {
 	addGraph: addGraph,
 	getGraph: getGraph,
-	checkIfExists: checkIfExists
+	checkIfExists: checkIfExists,
+	loadGraph: loadGraph
 };
 
 function addGraph(req, res, next) {
@@ -97,5 +98,15 @@ function getGraphFromDb(req, res, next) {
 	});
 
 	return deferred.promise;
+}
+
+function loadGraph(req, res, next) {
+	var data = res.locals.data;
+
+	var graph = new Graph();
+	graphCtrl.load(graph, data.name, data.followings);
+
+	res.locals.graph = graph;
+	next();
 }
 

@@ -26,6 +26,14 @@ var q = require('q'),
 		}
 	};
 
+module.exports = {
+	createGraphFor: createGraphFor,
+	following: following,
+	isFollowing: isFollowing,
+	stepsTo: stepsTo,
+	mutuallyFollow: mutuallyFollow
+};
+
 var newgGitUserResource = (function() {
 	return function(name, options, isInitUser) {
 		var options = options || {};
@@ -143,27 +151,24 @@ function saveOnAllCompleted() {
 
 function following() {
 	return graphCtrl.getNeighborsFor(self.options.graph, this.options.graphName);
-}
+};
 
 function isFollowing(name) {
 	return graphCtrl.pathBetween(self.options.graph, this.options.graphName, name);
-}
+};
 
 function stepsTo() {
 	throw "Not Implemented!";
-}
+};
 
 function mutuallyFollow(req, res, next) {
-	var data = res.locals.data;
-
 	if (!req.params.username) {
 		res.status(400);
 		res.end();
 		return;
 	}
 
-	var graph = new Graph();
-	graphCtrl.load(graph, data.followings);
+	var graph = res.locals.graph;
 
 	var first = graphCtrl.pathBetween(graph, data.name, req.params.username),
 		second = graphCtrl.pathBetween(graph, req.params.username, data.name),
@@ -178,12 +183,4 @@ function mutuallyFollow(req, res, next) {
 	}
 
 	res.send(result);
-}
-
-module.exports = {
-	createGraphFor: createGraphFor,
-	following: following,
-	isFollowing: isFollowing,
-	stepsTo: stepsTo,
-	mutuallyFollow: mutuallyFollow
-}
+};
