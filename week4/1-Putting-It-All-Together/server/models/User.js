@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
 	encryption = require('../utilities/encryption');
 
 var userSchema = mongoose.Schema({
-	username: { type: String, require: '{PATH} is required', unique: true},
+	username: { type: String, require: true, unique: true},
 	salt: String,
 	hashPass: String
 });
