@@ -1,11 +1,19 @@
-var express = require('express'),
+var express = require('express'),	
 	bodyParser = require('body-parser'),
-	cookieParser = require('cookie-parser');
+	cookieParser = require('cookie-parser'),
+	session = require('express-session'),
+	passport = require('passport');
+
 
 module.exports = function(app) {
 	app.set('view engine', 'jade');
 	app.set('views', config.rootPath + '/server/views');
 	app.use(cookieParser());
 	app.use(bodyParser.json());
-	app.use(express.static(config.rootPath + '/public'));	
+
+	app.use(session({secret: 'elenaanaya'}));
+	app.use(passport.initialize());
+	app.use(passport.session());
+	app.use(express.static(config.rootPath + '/public'));
+	
 }
