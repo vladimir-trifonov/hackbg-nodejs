@@ -16,7 +16,14 @@ module.exports = {
 	getNeighborsFor: function(graph, name) {
 		return graph.getNeighborsFor(name);
 	},
-	load: function(graph, parentName, childrens) {
-		throw "Not Implemented!";
+	load: function(graph, data) {
+		data.forEach(function(userData) {
+			var name = userData.name;
+			var followings = userData.following;
+
+			followings.forEach(function(followingUser) {
+				graph.addEdge(name, followingUser);
+			})
+		})
 	}
 }

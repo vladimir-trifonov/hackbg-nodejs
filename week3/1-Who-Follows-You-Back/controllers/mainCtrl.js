@@ -1,5 +1,7 @@
 var GitUser = require('mongoose').model('GitUser'),
 	sanitize = require('mongo-sanitize'),
+	Graph = require("../lib/graph").Graph,
+	graphCtrl = require('./graphCtrl'),
 	Q = require('q');
 
 module.exports = {
@@ -82,13 +84,14 @@ function getGraphFromDb(req, res, next) {
 		}
 
 		var result = {
-			data: null
+			data: {}
 		};
 		if (gitUser !== null) {
 			if(gitUser.status === "pending") {
 				result.msg = "Graph is not ready!";
 			} else if(gitUser.status === "ready"){
-				result.data = gitUser.followings;
+				result.data.followings = gitUser.followings;
+				result.data.name = gitUser.name;
 			}
 		} else {
 			result.msg = "Graph not exists!";
@@ -104,9 +107,10 @@ function loadGraph(req, res, next) {
 	var data = res.locals.data;
 
 	var graph = new Graph();
-	graphCtrl.load(graph, data.name, data.followings);
+	graphCtrl.load(graph, data.followings);
 
 	res.locals.graph = graph;
+	res.locals.name = data.name;
 	next();
 }
 

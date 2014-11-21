@@ -169,9 +169,10 @@ function mutuallyFollow(req, res, next) {
 	}
 
 	var graph = res.locals.graph;
+	var name = res.locals.name;
 
-	var first = graphCtrl.pathBetween(graph, data.name, req.params.username),
-		second = graphCtrl.pathBetween(graph, req.params.username, data.name),
+	var first = graphCtrl.pathBetween(graph, name, req.params.username),
+		second = graphCtrl.pathBetween(graph, req.params.username, name),
 		result = {};
 
 	if (first === true && second === true) {
