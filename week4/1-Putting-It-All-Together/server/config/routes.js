@@ -1,6 +1,9 @@
-var controllers = require("../controllers");
+var controllers = require("../controllers"),
+	auth = require('./auth');
 
 module.exports = function(app) {
+	app.post('/api/users', controllers.usersController.createUser);
+	
 	app.post('/api/snipets', auth.isAuthenticated, controllers.snipetsController.create);
 	app.put('/api/snipets/:snipetId', auth.isAuthenticated, controllers.snipetsController.update);
 	app['delete']('/api/snipets/:snipetId', auth.isAuthenticated, controllers.snipetsController['delete']);

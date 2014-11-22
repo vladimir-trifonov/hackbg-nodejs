@@ -1,8 +1,8 @@
 (function() {
 	"use strict";
-	angular.module('app').factory('auth', ["$scope", "$http", "$q", "identity", "UsersResource", auth])
+	angular.module('app').factory('auth', ["$http", "$q", "identity", "UsersResource", auth])
 
-	function auth($scope, $http, $q, identity, UsersResource) {
+	function auth($http, $q, identity, UsersResource) {
 		return {
 			signup: function(user) {
 				var deferred = $q.defer();

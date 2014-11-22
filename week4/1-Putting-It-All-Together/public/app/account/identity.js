@@ -1,8 +1,8 @@
 (function() {
 	"use strict";
-	angular.module('app').factory('identity', ["$scope", "$window", "UsersResource", identity])
+	angular.module('app').factory('identity', ["$window", "UsersResource", identity])
 
-	function identity($scope, $window, UsersResource) {
+	function identity($window, UsersResource) {
 		var user;
 		if ($window.bootstrappedUserObject) {
 			user = new UsersResource();

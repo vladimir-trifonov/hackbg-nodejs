@@ -2,6 +2,6 @@ var snipetsController = require('./snipetsController'),
 	usersController = require('./usersController');
 
 module.exports = {
-	snipetsController: snipetsController
+	snipetsController: snipetsController,
 	usersController: usersController
 }

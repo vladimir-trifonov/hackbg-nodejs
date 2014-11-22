@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-	snipet = require('../models/Snipet');
+	snipet = require('../models/Snipet'),
+	user = require('../models/User');
 
 module.exports = function(config) {
 	mongoose.connect(config.db);

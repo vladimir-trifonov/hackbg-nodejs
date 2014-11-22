@@ -1,0 +1,17 @@
+{
+  "name": "3-A-Big-File",
+  "version": "1.0.0",
+  "description": "We want to use Node streams in order to read a big file, containing random numbers, separated by `,` and compute their sum.\r The file should be of size around `5GB`, so it wont be easy to load it in memory.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "biguint-format": "^0.2.2",
+    "crypto": "0.0.3",
+    "minimist": "^1.1.0",
+    "q": "^1.1.1"
+  }
+}

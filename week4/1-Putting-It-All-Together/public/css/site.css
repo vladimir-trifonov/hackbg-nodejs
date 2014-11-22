@@ -1,6 +1,9 @@
 body {
   padding-top: 80px;
 }
+a{
+    cursor: pointer;
+}
 footer {
   padding: 0 120px 0 120px;
 }
