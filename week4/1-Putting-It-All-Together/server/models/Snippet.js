@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 
-var snipetSchema = mongoose.Schema({
+var snippetSchema = mongoose.Schema({
     language: String,
     filename: String,
     code: String,
     creator: String
 });
-mongoose.model('Snipet', snipetSchema);
+mongoose.model('Snippet', snippetSchema);

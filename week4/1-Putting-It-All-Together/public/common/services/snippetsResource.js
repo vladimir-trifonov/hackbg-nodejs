@@ -1,9 +1,12 @@
 (function() {
-	angular.module('common.services').factory("snippetsResource", ["$resource", snippetsResource]);
+	"use strict";
+	angular.module('app').factory('SnippetsResource', ["$resource", SnippetsResource])
 
-	function snippetsResource($resource) {
-		return $resource('/api/snippets/:snippetId', {
-			_id: '@snippetId'
-		});
-	}
+	function SnippetsResource($resource) {
+		var SnippetsResource = $resource('/api/snippets/:id', {
+			_id: '@id'
+		}, {save: {method: 'PUT', isArray: false}, update: {method: 'POST', isArray: false}});
+		
+		return SnippetsResource;
+	};
 }());

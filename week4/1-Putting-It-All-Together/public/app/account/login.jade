@@ -3,9 +3,16 @@
 		.form-group
 			input.form-control(type="text", placeholder="Username", ng-model="user.username")
 			input.form-control(type="password", placeholder="Password", ng-model="user.password")
-		button.btn.btn-primary(ng-click="login(user)") Login
-		a.btn.btn-primary(ng-href="#/signup") Sign up
+		button.btn.btn-default(ng-click="login(user)") Login
+		a.btn.btn-default(ng-href="#/signup") Sign up
 	ul.nav.navbar-nav.navbar-right(ng-show="identity.isAuthenticated()")
+		li.dropdown
+			a.dropdown-toggle(data-toggle="dropdown")
+				| Snippets
+				span.caret
+			ul.dropdown-menu
+				li
+					a(ng-href="#/snippets/new") Add snippet
 		li.dropdown
 			a.dropdown-toggle(data-toggle="dropdown")
 				| {{identity.currentUser.username}}

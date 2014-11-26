@@ -1,0 +1,20 @@
+.container
+	.jumbotron
+		form.form-horizontal(name="addSnippetForm")
+			fieldset
+				legend New Snippet
+				.control-group
+					label.control-label(for='filename-textinput') File Name *
+					.controls
+						input#filename-textinput.input-xlarge(name='filename', type='text', required, ng-model='snippet.filename')
+					label.control-label(for='language-textinput') Language *
+					.controls
+						input#filename-textinput.input-xlarge(name='language', type='text', required, ng-model='snippet.language')
+				.control-group
+					label.control-label(for='newsnippet-textarea') Code *
+					.controls
+						textarea#newsnippet-textarea(name='code', required, ng-model='snippet.code')
+				.control-group
+					.controls
+						a.btn.btn-default(href="#/") Cancel
+						button#savesnippet-button.btn.btn-default(name='savesnippet-button', ng-click="addSnippet(snippet)", ng-disabled="addSnippetForm.$invalid") Save

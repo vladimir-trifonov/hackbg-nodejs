@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'),
-	snipet = require('../models/Snipet'),
+	snippet = require('../models/Snippet'),
 	user = require('../models/User');
 
 module.exports = function(config) {

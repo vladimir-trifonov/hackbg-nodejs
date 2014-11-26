@@ -29,13 +29,10 @@
 				templateUrl: '/partials/account/signup',
 				controller: 'SignUpCtrl'
 			})
-			.when('/snippets', {
+			.when('/snippets/new', {
 				templateUrl: '/partials/snippets/newsnippet',
-				controller: 'SnippetCtrl'
-			})
-			.when('/courses', {
-				templateUrl: '/partials/snippets/snippets-list',
-				controller: 'SnippetsListCtrl'
+				controller: 'SnippetCtrl',
+				resolve: routeUserChecks.authenticated
 			})
 			.otherwise({
 				redirectTo: '/'

@@ -1,0 +1,21 @@
+{
+  "name": "1-Chat-Server-And-Clients",
+  "version": "0.0.0",
+  "homepage": "https://github.com/vladimir-trifonov/hackbg-nodejs",
+  "authors": [
+    "Vladimir Trifonov <trifonov.dev@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "./public/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "socket.io": "~1.2.1",
+    "socket.io-client": "~1.2.1"
+  }
+}

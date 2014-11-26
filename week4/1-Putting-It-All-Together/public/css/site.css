@@ -1,5 +1,6 @@
 body {
   padding-top: 80px;
+  color: #000;
 }
 a{
     cursor: pointer;
@@ -19,4 +20,19 @@ a.btn {
 }
 .toast-top-right {
   top: 70px;
+}
+.jumbotron {
+	margin-top: 30px;
+	background-color: #fff;
+	text-align: center;
+}
+footer {
+	display: none;
+}
+header.nav {
+	border-bottom: 1px solid #fff;
+}
+textarea {
+  width: 300px;
+  height: 150px;
 }

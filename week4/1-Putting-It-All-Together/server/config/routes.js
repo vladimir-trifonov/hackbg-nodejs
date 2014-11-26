@@ -4,10 +4,11 @@ var controllers = require("../controllers"),
 module.exports = function(app) {
 	app.post('/api/users', controllers.usersController.createUser);
 	
-	app.post('/api/snipets', auth.isAuthenticated, controllers.snipetsController.create);
-	app.put('/api/snipets/:snipetId', auth.isAuthenticated, controllers.snipetsController.update);
-	app['delete']('/api/snipets/:snipetId', auth.isAuthenticated, controllers.snipetsController['delete']);
-	app.get('/api/snipets/', auth.isAuthenticated, controllers.snipetsController.read);
+	app.put('/api/snippets', auth.isAuthenticated, controllers.snippetsController.create);
+	app.post('/api/snippets/:snippetId', auth.isAuthenticated, controllers.snippetsController.update);
+	app['delete']('/api/snippets/:snippetId', auth.isAuthenticated, controllers.snippetsController['delete']);
+	app.get('/api/snippets/', auth.isAuthenticated, controllers.snippetsController.read);
+	app.get('/api/snippets/:snippetId', auth.isAuthenticated, controllers.snippetsController.read);
 
 	app.get('/partials/:partialArea/:partialName', function(req, res) {
 		res.render('../../public/app/' + req.params.partialArea + '/' + req.params.partialName);

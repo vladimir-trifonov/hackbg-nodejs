@@ -2,7 +2,7 @@
 	.well
 		form.form-horizontal(name="signUpForm")
 			fieldset
-				legend Create New User				
+				legend Create New User
 				.form-group
 					label.col-md-2.control-label(for='username') Username
 					.col-md-10
@@ -12,5 +12,5 @@
 					.col-md-10
 						input.form-control(type="password", placeholder="Password", ng-model="user.password", required)
 				.pull-right
-					button.btn.btn-primary(ng-click="signup(user)", ng-disabled="signUpForm.$invalid") Create
-					a.btn.btn-primary(href="#/") Cancel
+					button.btn.btn-default(ng-click="signup(user)", ng-disabled="signUpForm.$invalid") Create
+					a.btn.btn-default(href="#/") Cancel
