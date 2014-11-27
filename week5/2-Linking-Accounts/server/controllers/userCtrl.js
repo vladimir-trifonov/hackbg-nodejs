@@ -1,6 +1,6 @@
 module.exports = {
-	getMain: function(req, res) {
-		res.render('main.ejs', {
+	getProfile: function(req, res) {
+		res.render('profile.ejs', {
 			"user": req.user
 		});
 	}

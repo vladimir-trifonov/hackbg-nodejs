@@ -20,5 +20,5 @@ module.exports = function(app, config) {
 	app.use(flash());
 
 	app.set('views', config.rootPath + '/server/views');
-	app.use(express.static(config.rootPath + '/public'));
+	//app.use(express.static(config.rootPath + '/public'));
 }
