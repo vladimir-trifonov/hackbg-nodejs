@@ -3,11 +3,15 @@ module.exports = {
 		req.logout();
 		res.redirect('/');
 	},
-	isLoggedIn: function(req, res, next){
-		if(req.isAuthenticated()) {
+	isLoggedIn: function(req, res, next) {
+		if (req.isAuthenticated()) {
 			return next();
 		}
+		if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
+			res.send("Authentication required", 401);
+		} else {
+			res.redirect('/');
+		}
 
-		res.redirect('/');
 	}
 }

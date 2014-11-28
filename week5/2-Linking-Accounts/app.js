@@ -10,3 +10,4 @@ require('./server/config/routes')(app);
 
 app.listen(config.port);
 console.log('Server running at port: ' + config.port);
+console.log('Auth keys are deleted! Please assure keys!');
