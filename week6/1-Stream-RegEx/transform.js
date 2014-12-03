@@ -6,7 +6,7 @@ var Transform = stream.Transform || require('readable-stream').Transform;
 
 function RegexTransform(options, regexExp) {
 	if (!(this instanceof RegexTransform)) {
-		return new RegexTransform(regexExp);
+		return new RegexTransform(options, regexExp);
 	}
 
 	this.regexExp = regexExp;

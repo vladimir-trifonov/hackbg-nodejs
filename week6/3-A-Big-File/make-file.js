@@ -2,25 +2,26 @@ var argv = require('minimist')(process.argv.slice(2)),
 	fs = require('fs'),
 	os = require('os'),
 	Q = require('q'),
-	format = require('biguint-format');
+	SumTranform = require('./transform').SumTranform;;
 
-var size = 5,
-	output = './output.src';
+var size = 5000,
+	output = './output.src',
+	inputSize;
 
-if (typeof argv.size === "undefined") {
-	size = parseInt(argv.size, 10);
+if (typeof argv.size !== "undefined") {
+	inputSize = argv.size.toLowerCase();
+	if (inputSize.indexOf('gb') !== -1) {
+		size *= 1000;
+	}
+	inputSize = replaceAll(inputSize, {
+		'mb': '',
+		'gb': ''
+	});
+	size *= parseInt(inputSize, 10);
 }
 
 if (typeof argv.output !== "undefined") {
 	output = argv.output;
-}
-
-if (argv.size.toLowerCase().indexOf('gb') !== -1) {
-	size *= 1000000;
-} else if (argv.size.toLowerCase().indexOf('mb') !== -1) {
-	size *= 1000;
-} else {
-	size *= 1000;
 }
 
 fs.exists(output, function(exists) {
@@ -34,8 +35,27 @@ fs.exists(output, function(exists) {
 	}
 })
 
-function readAndCalc(fn) {
+var sum = 0;
 
+function readAndCalc(fn) {
+	var sumFormatter = createFormatter();
+
+	var stream = fs.createReadStream(output)
+		.pipe(sumFormatter);
+
+	sumFormatter.on(
+		"unpipe",
+		function handleEndEvent() {
+			console.dir(this.res.toString());
+		}
+	);
+}
+
+function createFormatter() {
+	var parser = new SumTranform({
+		objectMode: true
+	});
+	return parser;
 }
 
 function genFile(fn, size) {
@@ -45,9 +65,9 @@ function genFile(fn, size) {
 	});
 
 	var bytesCount = 0;
-	var resource = genNums();
+	var resource = genNums(size >= 1000000 ? 200 : 1);
 	while (bytesCount < size) {
-		bytesCount += 200000;
+		bytesCount += (size >= 1000000 ? 1000000 : 5000);
 		writeStream.write(resource);
 	}
 	writeStream.on('finish', function() {
@@ -57,16 +77,16 @@ function genFile(fn, size) {
 	return deferred.promise;
 }
 
-function genNums() {
+function genNums(multiplier) {
 	var cnt = 0;
-	var num = Math.random();
+	var num = parseInt(Math.random().toString().replace('.', ''), 10);
 	var res = '';
-	while (cnt < 1000000) {
+	while (cnt < 5000 * multiplier) {
 		cnt++;
 		for (var i = 0; i < 10; i++) {
 			num += i;
 			res += num;
-			if (i > 0 && i < 9) {
+			if (i >= 0 && i < 9) {
 				res += ', ';
 			}
 		}
@@ -74,4 +94,12 @@ function genNums() {
 		res += os.EOL;
 	};
 	return res;
+}
+
+function replaceAll(str, mapObj) {
+	var re = new RegExp(Object.keys(mapObj).join("|"), "gi");
+
+	return str.replace(re, function(matched) {
+		return mapObj[matched.toLowerCase()];
+	});
 }
