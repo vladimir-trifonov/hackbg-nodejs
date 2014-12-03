@@ -2,7 +2,7 @@ var argv = require('minimist')(process.argv.slice(2)),
 	fs = require('fs'),
 	os = require('os'),
 	Q = require('q'),
-	SumTranform = require('./transform').SumTranform;;
+	SumTranform = require('./transform').SumTranform;
 
 var size = 5000,
 	output = './output.src',

@@ -19,8 +19,8 @@ util.inherits(SumTranform, Transform);
 
 SumTranform.prototype._transform = function(chunk, enc, cb) {
 	var self = this,
-		nums = (chunk.toString().trim()).replace(os.EOL, '').split(",");		
-	
+		nums = (chunk.toString().trim()).replace(os.EOL, '').split(",");
+
 	nums.forEach(function(num) {
 		self.res = self.res.add(num | 0);
 	})
